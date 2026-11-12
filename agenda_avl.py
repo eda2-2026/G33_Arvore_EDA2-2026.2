@@ -6,6 +6,7 @@ Execute com ``python3 agenda_avl.py`` para abrir o menu interativo ou com
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from datetime import date
 from typing import Iterator
@@ -214,3 +215,127 @@ class AgendaAVL:
             yield from _percorrer(no.direita)
 
         return _percorrer(self.raiz)
+
+
+def _formatar(tarefa: Tarefa) -> str:
+    return (
+        f"#{tarefa.id} | {tarefa.prazo} | {tarefa.nome} | "
+        f"{tarefa.disciplina} | dificuldade: {tarefa.dificuldade}"
+    )
+
+
+def _ler_tarefa(agenda: AgendaAVL) -> Tarefa:
+    identificador = int(input("ID único: ").strip())
+    prazo = input("Prazo (AAAA-MM-DD): ").strip()
+    nome = input("Atividade: ").strip()
+    disciplina = input("Disciplina: ").strip()
+    dificuldade = input("Dificuldade (opcional): ").strip() or "não informada"
+    tarefa = Tarefa(identificador, prazo, nome, disciplina, dificuldade)
+    agenda.inserir(tarefa)
+    return tarefa
+
+
+def _demonstrar_rotacoes() -> None:
+    print("Demonstração de rotações AVL (fator = altura esquerda - altura direita):")
+    simples = AgendaAVL()
+    for identificador, prazo in enumerate(("2026-11-10", "2026-11-11", "2026-11-12"), 1):
+        simples.inserir(Tarefa(identificador, prazo, f"Tarefa {identificador}", "EDA2"))
+    print("\nInserção crescente (caso direita-direita, rotação simples à esquerda):")
+    for tarefa, fator in simples.fatores():
+        print(f"  {_formatar(tarefa)} | fator {fator:+d}")
+
+    dupla = AgendaAVL()
+    for identificador, prazo in enumerate(("2026-11-12", "2026-11-10", "2026-11-11"), 1):
+        dupla.inserir(Tarefa(identificador, prazo, f"Tarefa {identificador}", "EDA2"))
+    print("\nInserção esquerda-direita (rotação dupla):")
+    for tarefa, fator in dupla.fatores():
+        print(f"  {_formatar(tarefa)} | fator {fator:+d}")
+
+
+def _agenda_de_exemplo() -> AgendaAVL:
+    agenda = AgendaAVL()
+    exemplos = (
+        Tarefa(1, "2026-11-20", "Lista de exercícios", "EDA2", "média"),
+        Tarefa(2, "2026-11-18", "Revisar árvores AVL", "EDA2", "alta"),
+        Tarefa(3, "2026-11-20", "Ler capítulo 4", "Cálculo", "baixa"),
+        Tarefa(4, "2026-11-25", "Preparar resumo", "Banco de Dados", "média"),
+    )
+    for tarefa in exemplos:
+        agenda.inserir(tarefa)
+    return agenda
+
+
+def demonstracao() -> None:
+    agenda = _agenda_de_exemplo()
+    print("StudyFlow — demonstração da agenda AVL")
+    print("\nTarefas em ordem de prazo:")
+    for tarefa in agenda.listar():
+        print(f"  {_formatar(tarefa)}")
+    print("\nPróxima tarefa:")
+    proxima = agenda.proxima_tarefa()
+    print(f"  {_formatar(proxima)}" if proxima else "  Agenda vazia.")
+    encontrada = agenda.buscar(3)
+    print("\nBusca pelo ID 3:")
+    print(f"  {_formatar(encontrada)}" if encontrada else "  Tarefa não encontrada.")
+    removida = agenda.remover(2)
+    print("\nRemoção do ID 2:")
+    print(f"  {_formatar(removida)}" if removida else "  Tarefa não encontrada.")
+    _demonstrar_rotacoes()
+
+
+def executar_agenda() -> None:
+    """Abre o menu independente da agenda; também pode ser chamado pelo main."""
+
+    agenda = AgendaAVL()
+    while True:
+        print("\nStudyFlow — Agenda de estudos (AVL)")
+        print("1. Cadastrar tarefa")
+        print("2. Listar por prazo")
+        print("3. Consultar próxima tarefa")
+        print("4. Buscar por ID")
+        print("5. Remover por ID")
+        print("6. Mostrar fatores de balanceamento")
+        print("0. Sair")
+        opcao = input("Escolha: ").strip()
+
+        try:
+            if opcao == "1":
+                tarefa = _ler_tarefa(agenda)
+                print(f"Tarefa cadastrada: {_formatar(tarefa)}")
+            elif opcao == "2":
+                tarefas = agenda.listar()
+                if not tarefas:
+                    print("A agenda está vazia.")
+                for tarefa in tarefas:
+                    print(f"  {_formatar(tarefa)}")
+            elif opcao == "3":
+                tarefa = agenda.proxima_tarefa()
+                print(_formatar(tarefa) if tarefa else "A agenda está vazia.")
+            elif opcao == "4":
+                identificador = int(input("ID para buscar: ").strip())
+                tarefa = agenda.buscar(identificador)
+                print(_formatar(tarefa) if tarefa else "Tarefa não encontrada.")
+            elif opcao == "5":
+                identificador = int(input("ID para remover: ").strip())
+                tarefa = agenda.remover(identificador)
+                print(f"Removida: {_formatar(tarefa)}" if tarefa else "Tarefa não encontrada.")
+            elif opcao == "6":
+                fatores = list(agenda.fatores())
+                if not fatores:
+                    print("A agenda está vazia.")
+                for tarefa, fator in fatores:
+                    print(f"  ID {tarefa.id}: fator {fator:+d}")
+            elif opcao == "0":
+                print("Até a próxima sessão de estudos!")
+                return
+            else:
+                print("Opção inválida. Escolha uma opção do menu.")
+        except (ValueError, EOFError) as erro:
+            print(f"Entrada inválida: {erro}")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--demo":
+        demonstracao()
+    else:
+        executar_agenda()
