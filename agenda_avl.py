@@ -155,9 +155,9 @@ class AgendaAVL:
         tarefa = self.buscar(identificador)
         if tarefa is None:
             return None
+        removida = tarefa
 
         def _remover_chave(no: NoAVL | None, chave: tuple[str, int]) -> NoAVL | None:
-            nonlocal removida
             if no is None:
                 return None
             if chave < no.tarefa.chave:
@@ -165,7 +165,6 @@ class AgendaAVL:
             elif chave > no.tarefa.chave:
                 no.direita = _remover_chave(no.direita, chave)
             else:
-                removida = no.tarefa
                 if no.esquerda is None:
                     return no.direita
                 if no.direita is None:
