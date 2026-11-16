@@ -16,9 +16,10 @@ Para abrir a agenda em uma janela desktop:
 python3 agenda_gui.py
 ```
 
-A janela permite cadastrar tarefas, consultar a próxima, buscar por ID,
-remover a tarefa selecionada e acompanhar os fatores AVL na tabela. Os dados
-ficam em memória enquanto a aplicação está aberta.
+A janela abre com quatro tarefas demonstrativas, incluindo duas com o mesmo
+prazo. Permite cadastrar tarefas, consultar a próxima, buscar por ID, remover
+a tarefa selecionada e acompanhar os fatores AVL na tabela. Os dados ficam em
+memória enquanto a aplicação está aberta; os exemplos reaparecem ao reiniciar.
 
 ## Executar no terminal
 

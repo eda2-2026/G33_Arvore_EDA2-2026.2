@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import tkinter as tk
+from datetime import date, timedelta
 from tkinter import messagebox, ttk
 
 from agenda_avl import AgendaAVL, Tarefa
@@ -12,6 +13,7 @@ class AgendaApp:
     def __init__(self, raiz: tk.Tk) -> None:
         self.raiz = raiz
         self.agenda = AgendaAVL()
+        self._carregar_exemplos()
 
         raiz.title("StudyFlow | Agenda de estudos")
         raiz.geometry("1040x700")
@@ -38,6 +40,25 @@ class AgendaApp:
         estilo.configure("Treeview", rowheight=34, background="#ffffff", fieldbackground="#ffffff", foreground="#172033", font=("TkDefaultFont", 10), borderwidth=0)
         estilo.configure("Treeview.Heading", background="#f8fafc", foreground="#475467", font=("TkDefaultFont", 9, "bold"), padding=(8, 10), relief="flat")
         estilo.map("Treeview", background=[("selected", "#e0e7ff")], foreground=[("selected", "#172033")])
+
+    def _carregar_exemplos(self) -> None:
+        hoje = date.today()
+        exemplos = (
+            (1, 1, "Revisar árvores AVL", "EDA2", "alta"),
+            (2, 3, "Resolver lista de exercícios", "EDA2", "média"),
+            (3, 3, "Ler capítulo sobre derivadas", "Cálculo", "baixa"),
+            (4, 6, "Preparar resumo da aula", "Banco de Dados", "média"),
+        )
+        for identificador, dias, nome, disciplina, dificuldade in exemplos:
+            self.agenda.inserir(
+                Tarefa(
+                    identificador,
+                    (hoje + timedelta(days=dias)).isoformat(),
+                    nome,
+                    disciplina,
+                    dificuldade,
+                )
+            )
 
     def _montar_interface(self) -> None:
         conteudo = ttk.Frame(self.raiz, style="App.TFrame", padding=(30, 24))
@@ -108,7 +129,7 @@ class AgendaApp:
         self.tabela.configure(yscrollcommand=barra.set)
         self.tabela.pack(side="left", fill="both", expand=True)
         barra.pack(side="right", fill="y")
-        self.status = tk.StringVar(value="Agenda vazia — cadastre uma tarefa para começar.")
+        self.status = tk.StringVar(value="Tarefas de exemplo carregadas — você pode removê-las ou adicionar as suas.")
         ttk.Label(conteudo, textvariable=self.status, style="Status.TLabel").pack(anchor="w", pady=(10, 0))
 
     def _atualizar_tabela(self, selecionar_id: int | None = None) -> None:
@@ -126,7 +147,7 @@ class AgendaApp:
             self.tabela.focus(item)
             self.tabela.see(item)
         quantidade = len(tarefas)
-        self.status.set(f"{quantidade} tarefa{'s' if quantidade != 1 else ''} na agenda · ordenadas por prazo e ID")
+        self.status.set(f"{quantidade} tarefa{'s' if quantidade != 1 else ''} na agenda · os exemplos podem ser removidos")
 
     def _cadastrar(self) -> None:
         try:
