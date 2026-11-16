@@ -8,7 +8,19 @@ tarefas por prazo em uma árvore AVL e roda de forma independente no terminal.
 - Python 3.10 ou mais recente
 - Nenhuma biblioteca externa
 
-## Executar
+## Interface gráfica
+
+Para abrir a agenda em uma janela desktop:
+
+```bash
+python3 agenda_gui.py
+```
+
+A janela permite cadastrar tarefas, consultar a próxima, buscar por ID,
+remover a tarefa selecionada e acompanhar os fatores AVL na tabela. Os dados
+ficam em memória enquanto a aplicação está aberta.
+
+## Executar no terminal
 
 Abra o terminal na pasta do projeto e execute:
 
