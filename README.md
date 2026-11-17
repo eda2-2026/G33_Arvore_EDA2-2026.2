@@ -1,5 +1,7 @@
 # StudyFlow — agenda de estudos
 
+LINK DA GRACAÇÃO DO PROJETO: https://youtu.be/sCKakvoKGiA
+
 Projeto de Estruturas de Dados e Algoritmos II. A parte da pessoa 1 organiza
 tarefas por prazo em uma árvore AVL e roda de forma independente no terminal.
 
